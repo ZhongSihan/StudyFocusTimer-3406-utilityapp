@@ -4,21 +4,34 @@
 
 Study Focus Timer is a utility-style Android mobile application developed for CP3406 Mobile Computing Assessment 1.
 
-The app helps students manage focused study sessions by providing a simple timer, session status, and adjustable study settings.
+The app helps students manage focused study sessions by providing a simple countdown timer, session status, break duration information, and adjustable timer settings.
 
 ## Purpose
 
-The purpose of this app is to support students in managing study time more effectively. It provides quick at-a-glance information such as focus duration, current session status, and break duration.
+The purpose of this app is to support students in managing study time more effectively. It provides quick at-a-glance information such as the remaining focus time, current session status, break duration, and motivational message.
 
-## Planned Features
+## Implemented Features
 
-- Main screen showing focus timer information
-- Start and reset timer buttons
-- Settings screen to adjust focus duration
-- Settings screen to adjust break duration
-- Optional motivational message
+- Main screen showing a study countdown timer
+- Start button to begin a focus session
+- Reset button to return the timer to the selected focus duration
+- Progress indicator showing timer progress
+- Settings screen for adjusting focus duration
+- Settings screen for adjusting break duration
+- Toggle option for showing or hiding the motivational message
+- Current setup summary shown on the settings screen
 - Jetpack Compose user interface
-- Clear GitHub commit history
+- GitHub version control with regular commits
+
+## Screens
+
+### Main Screen
+
+The main screen displays the focus timer, progress indicator, current session status, break duration, motivational message, and action buttons.
+
+### Settings Screen
+
+The settings screen allows the user to adjust the focus duration, break duration, and motivational message option. These settings update the content shown on the main screen.
 
 ## Assessment Information
 
