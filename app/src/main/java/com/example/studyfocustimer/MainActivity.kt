@@ -33,6 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.studyfocustimer.ui.theme.StudyFocusTimerTheme
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,15 +59,31 @@ fun StudyFocusTimerApp(modifier: Modifier = Modifier) {
     var breakDuration by remember { mutableIntStateOf(5) }
     var showMotivationalMessage by remember { mutableStateOf(true) }
     var isFocusing by remember { mutableStateOf(false) }
+    var remainingSeconds by remember { mutableIntStateOf(focusDuration * 60) }
+
+    LaunchedEffect(isFocusing, remainingSeconds) {
+        if (isFocusing && remainingSeconds > 0) {
+            delay(1000)
+            remainingSeconds--
+        }
+
+        if (remainingSeconds == 0) {
+            isFocusing = false
+        }
+    }
 
     if (currentScreen == "main") {
         MainScreen(
             focusDuration = focusDuration,
             breakDuration = breakDuration,
+            remainingSeconds = remainingSeconds,
             showMotivationalMessage = showMotivationalMessage,
             isFocusing = isFocusing,
             onStartClick = { isFocusing = true },
-            onResetClick = { isFocusing = false },
+            onResetClick = {
+                isFocusing = false
+                remainingSeconds = focusDuration * 60
+            },
             onSettingsClick = { currentScreen = "settings" },
             modifier = modifier
         )
@@ -74,7 +92,11 @@ fun StudyFocusTimerApp(modifier: Modifier = Modifier) {
             focusDuration = focusDuration,
             breakDuration = breakDuration,
             showMotivationalMessage = showMotivationalMessage,
-            onFocusDurationChange = { focusDuration = it },
+            onFocusDurationChange = {
+                focusDuration = it
+                remainingSeconds = it * 60
+                isFocusing = false
+            },
             onBreakDurationChange = { breakDuration = it },
             onMotivationalMessageChange = { showMotivationalMessage = it },
             onBackClick = { currentScreen = "main" },
@@ -87,6 +109,7 @@ fun StudyFocusTimerApp(modifier: Modifier = Modifier) {
 fun MainScreen(
     focusDuration: Int,
     breakDuration: Int,
+    remainingSeconds: Int,
     showMotivationalMessage: Boolean,
     isFocusing: Boolean,
     onStartClick: () -> Unit,
@@ -116,8 +139,12 @@ fun MainScreen(
                 modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                val minutes = remainingSeconds / 60
+                val seconds = remainingSeconds % 60
+                val timeText = "%02d:%02d".format(minutes, seconds)
+
                 Text(
-                    text = "$focusDuration minutes",
+                    text = timeText,
                     fontSize = 42.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -280,6 +307,7 @@ fun MainScreenPreview() {
         MainScreen(
             focusDuration = 25,
             breakDuration = 5,
+            remainingSeconds = 25 * 60,
             showMotivationalMessage = true,
             isFocusing = false,
             onStartClick = {},
