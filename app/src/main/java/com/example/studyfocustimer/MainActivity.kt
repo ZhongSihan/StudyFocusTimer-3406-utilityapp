@@ -56,12 +56,16 @@ fun StudyFocusTimerApp(modifier: Modifier = Modifier) {
     var focusDuration by remember { mutableIntStateOf(25) }
     var breakDuration by remember { mutableIntStateOf(5) }
     var showMotivationalMessage by remember { mutableStateOf(true) }
+    var isFocusing by remember { mutableStateOf(false) }
 
     if (currentScreen == "main") {
         MainScreen(
             focusDuration = focusDuration,
             breakDuration = breakDuration,
             showMotivationalMessage = showMotivationalMessage,
+            isFocusing = isFocusing,
+            onStartClick = { isFocusing = true },
+            onResetClick = { isFocusing = false },
             onSettingsClick = { currentScreen = "settings" },
             modifier = modifier
         )
@@ -84,9 +88,12 @@ fun MainScreen(
     focusDuration: Int,
     breakDuration: Int,
     showMotivationalMessage: Boolean,
+    isFocusing: Boolean,
+    onStartClick: () -> Unit,
+    onResetClick: () -> Unit,
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier
-) {
+){
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -118,7 +125,7 @@ fun MainScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "Ready to focus",
+                    text = if (isFocusing) "Focusing" else "Ready to focus",
                     fontSize = 18.sp,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -147,15 +154,16 @@ fun MainScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+
             Button(
-                onClick = {},
+                onClick = onStartClick,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Start")
+                Text(if (isFocusing) "Focusing" else "Start")
             }
 
             OutlinedButton(
-                onClick = {},
+                onClick = onResetClick,
                 modifier = Modifier.weight(1f)
             ) {
                 Text("Reset")
@@ -273,23 +281,10 @@ fun MainScreenPreview() {
             focusDuration = 25,
             breakDuration = 5,
             showMotivationalMessage = true,
+            isFocusing = false,
+            onStartClick = {},
+            onResetClick = {},
             onSettingsClick = {}
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SettingsScreenPreview() {
-    StudyFocusTimerTheme {
-        SettingsScreen(
-            focusDuration = 25,
-            breakDuration = 5,
-            showMotivationalMessage = true,
-            onFocusDurationChange = {},
-            onBreakDurationChange = {},
-            onMotivationalMessageChange = {},
-            onBackClick = {}
         )
     }
 }
