@@ -46,3 +46,7 @@ Student: Zhong Sihan
 - Kotlin
 - Jetpack Compose
 - GitHub
+
+## Testing Note
+
+The app interface was checked using Jetpack Compose Preview in Android Studio. Emulator testing could not be completed due to no available target device on the current development environment.
