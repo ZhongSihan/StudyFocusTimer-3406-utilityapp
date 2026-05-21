@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import com.example.studyfocustimer.ui.theme.StudyFocusTimerTheme
 import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.delay
+import androidx.compose.material3.LinearProgressIndicator
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,11 +143,23 @@ fun MainScreen(
                 val minutes = remainingSeconds / 60
                 val seconds = remainingSeconds % 60
                 val timeText = "%02d:%02d".format(minutes, seconds)
+                val totalSeconds = focusDuration * 60
+                val progress = if (totalSeconds > 0) {
+                    1f - remainingSeconds.toFloat() / totalSeconds.toFloat()
+                } else {
+                    0f
+                }
 
                 Text(
                     text = timeText,
                     fontSize = 42.sp,
                     fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                LinearProgressIndicator(
+                    progress = { progress },
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
