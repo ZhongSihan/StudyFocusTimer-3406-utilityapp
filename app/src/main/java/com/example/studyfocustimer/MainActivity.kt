@@ -14,11 +14,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +52,41 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun StudyFocusTimerApp(modifier: Modifier = Modifier) {
+    var currentScreen by remember { mutableStateOf("main") }
+    var focusDuration by remember { mutableIntStateOf(25) }
+    var breakDuration by remember { mutableIntStateOf(5) }
+    var showMotivationalMessage by remember { mutableStateOf(true) }
+
+    if (currentScreen == "main") {
+        MainScreen(
+            focusDuration = focusDuration,
+            breakDuration = breakDuration,
+            showMotivationalMessage = showMotivationalMessage,
+            onSettingsClick = { currentScreen = "settings" },
+            modifier = modifier
+        )
+    } else {
+        SettingsScreen(
+            focusDuration = focusDuration,
+            breakDuration = breakDuration,
+            showMotivationalMessage = showMotivationalMessage,
+            onFocusDurationChange = { focusDuration = it },
+            onBreakDurationChange = { breakDuration = it },
+            onMotivationalMessageChange = { showMotivationalMessage = it },
+            onBackClick = { currentScreen = "main" },
+            modifier = modifier
+        )
+    }
+}
+
+@Composable
+fun MainScreen(
+    focusDuration: Int,
+    breakDuration: Int,
+    showMotivationalMessage: Boolean,
+    onSettingsClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -68,7 +110,7 @@ fun StudyFocusTimerApp(modifier: Modifier = Modifier) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "25 minutes",
+                    text = "$focusDuration minutes",
                     fontSize = 42.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -81,12 +123,21 @@ fun StudyFocusTimerApp(modifier: Modifier = Modifier) {
                     color = MaterialTheme.colorScheme.primary
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "Stay focused. One task at a time.",
+                    text = "Break duration: $breakDuration minutes",
                     fontSize = 16.sp
                 )
+
+                if (showMotivationalMessage) {
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "Stay focused. One task at a time.",
+                        fontSize = 16.sp
+                    )
+                }
             }
         }
 
@@ -114,7 +165,7 @@ fun StudyFocusTimerApp(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedButton(
-            onClick = {},
+            onClick = onSettingsClick,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Settings")
@@ -122,10 +173,123 @@ fun StudyFocusTimerApp(modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+fun SettingsScreen(
+    focusDuration: Int,
+    breakDuration: Int,
+    showMotivationalMessage: Boolean,
+    onFocusDurationChange: (Int) -> Unit,
+    onBreakDurationChange: (Int) -> Unit,
+    onMotivationalMessageChange: (Boolean) -> Unit,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Settings",
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "Focus Duration",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            listOf(15, 25, 45).forEach { duration ->
+                FilterChip(
+                    selected = focusDuration == duration,
+                    onClick = { onFocusDurationChange(duration) },
+                    label = { Text("$duration min") }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "Break Duration",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            listOf(5, 10, 15).forEach { duration ->
+                FilterChip(
+                    selected = breakDuration == duration,
+                    onClick = { onBreakDurationChange(duration) },
+                    label = { Text("$duration min") }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Show motivational message",
+                fontSize = 18.sp
+            )
+
+            Switch(
+                checked = showMotivationalMessage,
+                onCheckedChange = onMotivationalMessageChange
+            )
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Button(
+            onClick = onBackClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Back to Timer")
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
-fun StudyFocusTimerPreview() {
+fun MainScreenPreview() {
     StudyFocusTimerTheme {
-        StudyFocusTimerApp()
+        MainScreen(
+            focusDuration = 25,
+            breakDuration = 5,
+            showMotivationalMessage = true,
+            onSettingsClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SettingsScreenPreview() {
+    StudyFocusTimerTheme {
+        SettingsScreen(
+            focusDuration = 25,
+            breakDuration = 5,
+            showMotivationalMessage = true,
+            onFocusDurationChange = {},
+            onBreakDurationChange = {},
+            onMotivationalMessageChange = {},
+            onBackClick = {}
+        )
     }
 }
