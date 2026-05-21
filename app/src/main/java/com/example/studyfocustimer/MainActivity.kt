@@ -244,6 +244,14 @@ fun SettingsScreen(
             fontWeight = FontWeight.Bold
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "Adjust the timer options shown on the main screen.",
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
@@ -302,7 +310,35 @@ fun SettingsScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "Current Setup",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text("Focus session: $focusDuration minutes")
+                Text("Break session: $breakDuration minutes")
+                Text(
+                    text = if (showMotivationalMessage) {
+                        "Motivational message: On"
+                    } else {
+                        "Motivational message: Off"
+                    }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = onBackClick,
