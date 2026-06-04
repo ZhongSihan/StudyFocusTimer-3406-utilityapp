@@ -36,6 +36,7 @@ import com.example.studyfocustimer.ui.theme.StudyFocusTimerTheme
 import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.delay
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +55,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun StudyFocusTimerApp(modifier: Modifier = Modifier) {
+fun StudyFocusTimerApp(
+    modifier: Modifier = Modifier,
+    focusViewModel: FocusViewModel = viewModel()
+) {
     var currentScreen by remember { mutableStateOf("main") }
     var focusDuration by remember { mutableIntStateOf(25) }
     var breakDuration by remember { mutableIntStateOf(5) }
@@ -85,6 +89,13 @@ fun StudyFocusTimerApp(modifier: Modifier = Modifier) {
                 isFocusing = false
                 remainingSeconds = focusDuration * 60
             },
+
+            quoteText = focusViewModel.quoteText,
+            quoteAuthor = focusViewModel.quoteAuthor,
+            isQuoteLoading = focusViewModel.isLoading,
+            quoteErrorMessage = focusViewModel.errorMessage,
+            onLoadQuoteClick = { focusViewModel.loadRandomQuote() },
+
             onSettingsClick = { currentScreen = "settings" },
             modifier = modifier
         )
@@ -115,9 +126,16 @@ fun MainScreen(
     isFocusing: Boolean,
     onStartClick: () -> Unit,
     onResetClick: () -> Unit,
+
+    quoteText: String,
+    quoteAuthor: String,
+    isQuoteLoading: Boolean,
+    quoteErrorMessage: String,
+    onLoadQuoteClick: () -> Unit,
+
     onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -189,6 +207,62 @@ fun MainScreen(
         }
 
         Spacer(modifier = Modifier.height(24.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "Daily Focus Quote",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = quoteText,
+                    fontSize = 16.sp
+                )
+
+                if (quoteAuthor.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = "- $quoteAuthor",
+                        fontSize = 14.sp
+                    )
+                }
+
+                if (quoteErrorMessage.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = quoteErrorMessage,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedButton(
+                    onClick = onLoadQuoteClick,
+                    enabled = !isQuoteLoading
+                ) {
+                    Text(
+                        text = if (isQuoteLoading) {
+                            "Loading..."
+                        } else {
+                            "Load New Quote"
+                        }
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -361,6 +435,11 @@ fun MainScreenPreview() {
             isFocusing = false,
             onStartClick = {},
             onResetClick = {},
+            quoteText = "Load a focus quote to get started.",
+            quoteAuthor = "",
+            isQuoteLoading = false,
+            quoteErrorMessage = "",
+            onLoadQuoteClick = {},
             onSettingsClick = {}
         )
     }
