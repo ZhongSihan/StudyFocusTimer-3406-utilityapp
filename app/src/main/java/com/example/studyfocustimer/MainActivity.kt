@@ -466,3 +466,18 @@ fun MainScreenPreview() {
         )
     }
 }
+@Preview(showBackground = true)
+@Composable
+fun SettingsScreenPreview() {
+    StudyFocusTimerTheme {
+        SettingsScreen(
+            focusDuration = 25,
+            breakDuration = 5,
+            showMotivationalMessage = true,
+            onFocusDurationChange = {},
+            onBreakDurationChange = {},
+            onMotivationalMessageChange = {},
+            onBackClick = {}
+        )
+    }
+}
