@@ -8,9 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.studyfocustimer.data.QuoteRepository
 import kotlinx.coroutines.launch
 
-class FocusViewModel : ViewModel() {
-
-    private val repository = QuoteRepository()
+class FocusViewModel(
+    private val repository: QuoteRepository
+) : ViewModel() {
 
     var quoteText by mutableStateOf("Load a focus quote to get started.")
         private set

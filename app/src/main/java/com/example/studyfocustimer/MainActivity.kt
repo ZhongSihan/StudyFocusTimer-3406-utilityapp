@@ -42,6 +42,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 
 
 class MainActivity : ComponentActivity() {
+    private val appContainer = AppContainer()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -49,6 +50,7 @@ class MainActivity : ComponentActivity() {
             StudyFocusTimerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     StudyFocusTimerApp(
+                        appContainer = appContainer,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -59,9 +61,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun StudyFocusTimerApp(
-    modifier: Modifier = Modifier,
-    focusViewModel: FocusViewModel = viewModel()
+    appContainer: AppContainer,
+    modifier: Modifier = Modifier
 ) {
+    val focusViewModel: FocusViewModel = viewModel {
+        FocusViewModel(appContainer.quoteRepository)
+    }
     var currentScreen by remember { mutableStateOf("main") }
     var focusDuration by remember { mutableIntStateOf(25) }
     var breakDuration by remember { mutableIntStateOf(5) }
